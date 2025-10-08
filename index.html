@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>كتالوج منتجات تاجر السعادة</title>
+    <!-- تضمين خط Tajawal الاحترافي وتكوين Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f0f4f8; /* خلفية فاتحة وناعمة */
+        }
+        /* لتطبيق الخط على جميع العناصر */
+        * {
+            font-family: 'Tajawal', sans-serif;
+        }
+        .product-card {
+            /* **التلميح البصري: يظهر اليد ويضيف انتقالاً ناعماً** */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer; 
+        }
+        .product-card:hover {
+            /* **التلميح البصري: البطاقة تتحرك للأعلى ويظهر ظل عميق** */
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15); 
+        }
+        
+        .card-category {
+            font-weight: 700; /* Tajawal Bold */
+        }
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* تنسيقات المودال (النافذة المنبثقة) */
+        .modal {
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal-content {
+            transition: transform 0.3s ease-out;
+        }
+        .invisible {
+            visibility: hidden;
+            opacity: 0;
+        }
+        .visible {
+            visibility: visible;
+            opacity: 100;
+        }
+
+        /* تنسيقات القسم المخفي (من نحن) - تم إخفاء المحتوى الآن */
+        #more-info-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
+        }
+        #more-info-content.expanded {
+            /* قيمة كبيرة فقط لإظهار زر العودة للخلف في حال تم إظهاره لاحقاً */
+            max-height: 800px; 
+            padding-top: 1.5rem; 
+        }
+
+        /* تنسيقات زر PayPal المخصص */
+        .pp-A8HPT7XV2J772 {
+            text-align:center;
+            border:none;
+            border-radius:0.25rem;
+            min-width:11.625rem;
+            padding:0 2rem;
+            height:2.625rem;
+            font-weight:bold;
+            background-color:#FFD140;
+            color:#000000;
+            font-family:"Helvetica Neue",Arial,sans-serif;
+            font-size:1rem;
+            line-height:1.25rem;
+            cursor:pointer;
+        }
+
+        /* تنسيقات محددات الوزن */
+        .weight-option {
+            transition: all 0.2s ease-in-out;
+        }
+        .weight-option.active {
+            border-color: #059669; /* Teal-600 */
+            background-color: #e0f2f1; /* Teal-50 */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="p-6 sm:p-12">
+
+    <!-- شريط العنوان والوصف (أنيق وواسع) -->
+    <header class="text-center mb-16 pt-4 pb-8 bg-white rounded-xl shadow-lg">
+        <!-- اسم الشركة الجديد -->
+        <p class="text-xl sm:text-2xl font-bold text-teal-600 mb-2">شركة تاجر السعادة</p>
+        <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-800 mb-3">كتالوج المنتجات الغذائية المجمدة</h1>
+        
+        <!-- **الوصف العام (تم تبسيطه وإخفاء التفاصيل)** -->
+        <p class="text-2xl sm:text-3xl font-extrabold text-indigo-700 max-w-4xl mx-auto mb-6 leading-relaxed bg-indigo-50 p-3 rounded-lg border-b-4 border-indigo-400">
+            لدينا أفضل جودة من الملوخية المفرومة الجاهزة للتصدير.
+            اكتشف المنتج وادفع مباشرة عبر الإنترنت.
+        </p>
+
+        <!-- زر "من نحن" (تم إخفاءه ولكن دالته ما زالت موجودة) -->
+        <!-- تم التعليق على الزر لإخفائه نهائياً، لكن يمكن إظهاره بمسح التعليق -->
+        <!-- <button id="toggle-info-btn" onclick="toggleMoreInfo()" class="mt-4 py-2 px-8 rounded-full font-bold text-lg bg-teal-500 text-white hover:bg-teal-600 transition duration-300 shadow-lg">
+            من نحن؟ (لمعرفة خدماتنا)
+        </button> -->
+
+        <!-- **القسم المخفي (باقي الوصف) - تم مسح المحتوى التفصيلي منه** -->
+        <div id="more-info-content" class="text-right max-w-4xl mx-auto">
+            <div class="text-gray-700 text-lg space-y-4">
+                <p class="text-xl font-bold mt-8 text-green-700">
+                    🤝 اشترِ الآن مباشرة عبر PayPal!
+                </p>
+            </div>
+        </div>
+
+        <div class="h-1 w-24 bg-teal-500 mx-auto mt-4 rounded-full"></div>
+    </header>
+
+    <!-- قائمة المنتجات (تعرض الآن الملوخية فقط) -->
+    <main id="product-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        <!-- يتم إضافة البطاقات هنا بواسطة JavaScript -->
+    </main>
+
+    <!-- تذييل الصفحة (تم تعديل اسم الشركة) -->
+    <footer class="text-center mt-20 pt-8 border-t border-gray-300 text-gray-500 text-sm">
+        <p>&copy; 2025 شركة تاجر السعادة. جميع الحقوق محفوظة. يتم الدفع مباشرة عبر PayPal.</p>
+    </footer>
+
+    <!-- المودال (النافذة المنبثقة) لتفاصيل المنتج -->
+    <div id="product-modal" class="modal invisible fixed inset-0 bg-gray-900 bg-opacity-90 flex items-center justify-center p-4 z-50">
+        <div id="modal-content" class="modal-content bg-white rounded-xl shadow-2xl w-full max-w-lg lg:max-w-xl overflow-hidden transform scale-95">
+            <!-- زر الإغلاق -->
+            <button onclick="closeModal()" class="absolute top-4 left-4 text-gray-600 hover:text-gray-900 z-10 p-2">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            
+            <div class="p-6 sm:p-8">
+                <!-- صورة المنتج في المودال -->
+                <img id="modal-img" src="" alt="صورة المنتج" class="w-full h-64 object-cover object-center rounded-lg mb-6 border border-gray-200">
+                
+                <p id="modal-category" class="card-category text-sm text-teal-600 mb-2"></p>
+                <h2 id="modal-name" class="text-3xl font-extrabold text-gray-900 mb-3"></h2>
+                
+                <p id="modal-description" class="text-gray-700 leading-relaxed text-lg mb-4"></p>
+                
+                <!-- خيارات الأوزان مع الأسعار -->
+                <h3 class="text-xl font-bold text-gray-800 mt-4 mb-3">اختر الوزن والسعر:</h3>
+                
+                <div id="weight-options-container" class="space-y-3 mb-6">
+                    <!-- يتم تحميل الخيارات هنا بواسطة JavaScript -->
+                </div>
+
+                <!-- زر الإغلاق -->
+                <button onclick="closeModal()" class="w-full py-3 px-6 rounded-lg font-bold text-lg bg-gray-200 text-gray-800 hover:bg-gray-300 transition duration-300 shadow-md">إغلاق</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- **بيانات المنتجات (الملوخية المفرومة فقط)** -->
+    <script id="product-data" type="application/json">
+        [
+            {
+                "id": 1,
+                "name": "ملوخية مفرومة جاهزة",
+                "category": "خضروات مجمدة",
+                "description": "أوراق ملوخية طازجة مفرومة ومجمدة، سهلة التحضير. منتج عالي الجودة جاهز للتصدير.",
+                "imgSrc": "https://i.ibb.co/JLMpggF/FB-IMG-1759446831730.jpg",
+                "variants": [
+                    {
+                        "weight": "1 كجم",
+                        "price": 15,
+                        "price_text": "15 دولار",
+                        "paypal_link": "https://www.paypal.com/ncp/payment/A8HPT7XV2J772" 
+                    },
+                    {
+                        "weight": "2 كجم",
+                        "price": 30,
+                        "price_text": "30 دولار",
+                        "paypal_link": "https://www.paypal.com/ncp/payment/A8HPT7XV2J772" 
+                    },
+                    {
+                        "weight": "3 كجم",
+                        "price": 40,
+                        "price_text": "40 دولار",
+                        "paypal_link": "https://www.paypal.com/ncp/payment/A8HPT7XV2J772" 
+                    }
+                ]
+            }
+        ]
+    </script>
+    
+    <script>
+        
+        // عند تحميل النافذة
+        window.onload = function() {
+            renderProductCards();
+        };
+
+        // دالة لتبديل عرض وإخفاء باقي المعلومات (تم تعطيل زر الإظهار/الإخفاء)
+        function toggleMoreInfo() {
+            const content = document.getElementById('more-info-content');
+            const button = document.getElementById('toggle-info-btn');
+            
+            if (content.classList.contains('expanded')) {
+                // إخفاء
+                content.classList.remove('expanded');
+                if (button) button.textContent = 'من نحن؟ (لمعرفة خدماتنا)';
+                if (button) button.classList.remove('bg-gray-400');
+                if (button) button.classList.add('bg-teal-500');
+            } else {
+                // إظهار
+                content.classList.add('expanded');
+                if (button) button.textContent = 'إخفاء التفاصيل';
+                if (button) button.classList.remove('bg-teal-500');
+                if (button) button.classList.add('bg-gray-400');
+            }
+        }
+
+        // دالة لعرض جميع بطاقات المنتجات
+        function renderProductCards() {
+            const container = document.getElementById('product-list');
+            const dataScript = document.getElementById('product-data').textContent;
+            let products;
+
+            try {
+                products = JSON.parse(dataScript);
+            } catch (e) {
+                console.error("Error parsing product data:", e);
+                container.innerHTML = `<p class="text-red-600 col-span-full text-center text-xl font-bold">عذراً، حدث خطأ في تحميل بيانات المنتجات.</p>`;
+                return;
+            }
+
+            // مسح أي محتوى سابق
+            container.innerHTML = ''; 
+
+            products.forEach(product => {
+                // تمت إعادة وظيفة النقر على البطاقة بالكامل لفتح المودال
+                const cardHtml = `
+                    <div class="product-card bg-white rounded-xl shadow-lg overflow-hidden flex flex-col" onclick="openModal(${product.id})">
+                        <!-- صورة المنتج -->
+                        <div class="h-64 overflow-hidden">
+                            <img src="${product.imgSrc}" 
+                                 alt="${product.name}" 
+                                 class="w-full h-full object-cover object-center transition duration-500 ease-in-out transform hover:scale-105"
+                                 onerror="this.onerror=null;this.src='https://placehold.co/600x400/ef4444/ffffff?text=خطأ%20في%20الصورة';">
+                        </div>
+                        
+                        <div class="p-6 flex flex-col flex-grow">
+                            <!-- الفئة والاسم -->
+                            <p class="card-category text-sm text-teal-600 mb-2">${product.category}</p>
+                            <h2 class="text-xl font-bold text-gray-900 mb-3 line-clamp-2">${product.name}</h2>
+                            
+                            <!-- الوصف -->
+                            <p class="text-gray-600 text-sm mb-4 line-clamp-3 flex-grow">${product.description}</p>
+                            
+                            <!-- زر الدفع المباشر -->
+                            <div class="flex mt-4">
+                                <!-- زر ينبه المستخدم لفتح الخيارات -->
+                                <button onclick="event.stopPropagation(); openModal(${product.id});"
+                                   class="flex-1 text-center py-2 rounded-lg font-bold bg-indigo-600 text-white hover:bg-indigo-700 transition duration-300 text-sm shadow-md">اختر الوزن وادفع الآن</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += cardHtml;
+            });
+        }
+        
+        // دوال المودال (النافذة المنبثقة)
+        let allProducts = [];
+
+        // تحميل البيانات مرة واحدة
+        try {
+            const dataScript = document.getElementById('product-data').textContent;
+            allProducts = JSON.parse(dataScript);
+        } catch (e) {
+            console.error("Failed to initialize products for modal:", e);
+        }
+
+        // دالة لعرض أزرار PayPal بناءً على الوزن المختار
+        function renderPaypalButton(paypalLink) {
+            return `
+                <div class="text-center mt-6">
+                    <form action="${paypalLink}" method="post" target="_blank" style="display:inline-grid;justify-items:center;align-content:start;gap:0.5rem;">
+                        <input class="pp-A8HPT7XV2J772" type="submit" value="اشترِ الآن عبر PayPal" />
+                        <img src="https://www.paypalobjects.com/images/Debit_Credit.svg" alt="cards" style="width: 150px;"/>
+                        <section style="font-size: 0.75rem; color: #4b5563;"> مدعوم من 
+                            <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg" alt="paypal" style="height:0.875rem;vertical-align:middle;"/>
+                        </section>
+                    </form>
+                </div>
+            `;
+        }
+
+        function openModal(productId) {
+            const product = allProducts.find(p => p.id === productId);
+            const modal = document.getElementById('product-modal');
+            const optionsContainer = document.getElementById('weight-options-container');
+            
+            if (!product) {
+                console.error("Product not found for ID:", productId);
+                return;
+            }
+
+            // تحديث محتوى المودال
+            document.getElementById('modal-img').src = product.imgSrc;
+            document.getElementById('modal-img').alt = product.name;
+            document.getElementById('modal-category').textContent = product.category;
+            document.getElementById('modal-name').textContent = product.name;
+            document.getElementById('modal-description').textContent = product.description;
+
+            // بناء خيارات الأوزان
+            optionsContainer.innerHTML = ''; // مسح الخيارات السابقة
+
+            let firstVariant = product.variants[0];
+            let activePaypalHtml = renderPaypalButton(firstVariant.paypal_link);
+            
+            product.variants.forEach((variant, index) => {
+                const isActive = index === 0 ? 'active' : '';
+                const optionHtml = `
+                    <div id="option-${index}" 
+                         data-paypal-link="${variant.paypal_link}"
+                         class="weight-option ${isActive} flex justify-between items-center p-4 bg-white border-2 border-gray-300 rounded-lg shadow-sm hover:border-teal-500"
+                         onclick="selectWeightOption(${productId}, ${index})">
+                        <span class="text-lg font-bold text-gray-800">${variant.weight}</span>
+                        <span class="text-xl font-extrabold text-indigo-600">${variant.price_text}</span>
+                    </div>
+                `;
+                optionsContainer.innerHTML += optionHtml;
+            });
+            
+            // إضافة حاوية زر الدفع تحت الخيارات
+            optionsContainer.innerHTML += `<div id="paypal-button-area">${activePaypalHtml}</div>`;
+
+
+            // إظهار المودال
+            modal.classList.remove('invisible');
+            modal.classList.remove('opacity-0');
+            modal.classList.add('visible');
+            
+            // جعل محتوى المودال يظهر بحركة لطيفة
+            const modalContent = document.getElementById('modal-content');
+            modalContent.style.transform = 'scale(1)';
+        }
+
+        function selectWeightOption(productId, selectedIndex) {
+            const product = allProducts.find(p => p.id === productId);
+            if (!product) return;
+
+            const optionsContainer = document.getElementById('weight-options-container');
+            const paypalArea = document.getElementById('paypal-button-area');
+
+            // إزالة حالة النشاط من كل الأزرار وإضافتها للزر المختار
+            product.variants.forEach((variant, index) => {
+                const option = document.getElementById(`option-${index}`);
+                if (option) {
+                    option.classList.remove('active');
+                }
+            });
+            
+            const selectedOption = document.getElementById(`option-${selectedIndex}`);
+            if (selectedOption) {
+                selectedOption.classList.add('active');
+                const newPaypalLink = selectedOption.getAttribute('data-paypal-link');
+                paypalArea.innerHTML = renderPaypalButton(newPaypalLink);
+            }
+        }
+
+
+        function closeModal() {
+            const modal = document.getElementById('product-modal');
+            const modalContent = document.getElementById('modal-content');
+
+            // جعل محتوى المودال يختفي بحركة لطيفة
+            modalContent.style.transform = 'scale(0.95)';
+
+            // إخفاء المودال بعد انتهاء الحركة
+            modal.classList.remove('visible');
+            modal.classList.add('opacity-0');
+            
+            // تأخير إزالة 'invisible' حتى بعد انتهاء حركة الانتقال
+            setTimeout(() => {
+                modal.classList.add('invisible');
+            }, 300); 
+        }
+
+        // إغلاق المودال عند النقر خارج محتوى المودال
+        document.getElementById('product-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'product-modal') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
+
