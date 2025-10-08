@@ -60,7 +60,6 @@
             transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
         }
         #more-info-content.expanded {
-            /* قيمة كبيرة فقط لإظهار زر العودة للخلف في حال تم إظهاره لاحقاً */
             max-height: 800px; 
             padding-top: 1.5rem; 
         }
@@ -95,25 +94,19 @@
 </head>
 <body class="p-6 sm:p-12">
 
-    <!-- شريط العنوان والوصف (أنيق وواسع) -->
+    <!-- شريط العنوان والوصف -->
     <header class="text-center mb-16 pt-4 pb-8 bg-white rounded-xl shadow-lg">
         <!-- اسم الشركة الجديد -->
         <p class="text-xl sm:text-2xl font-bold text-teal-600 mb-2">شركة تاجر السعادة</p>
         <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-800 mb-3">كتالوج المنتجات الغذائية المجمدة</h1>
         
-        <!-- **الوصف العام (تم تبسيطه وإخفاء التفاصيل)** -->
+        <!-- **الوصف العام (المبسط)** -->
         <p class="text-2xl sm:text-3xl font-extrabold text-indigo-700 max-w-4xl mx-auto mb-6 leading-relaxed bg-indigo-50 p-3 rounded-lg border-b-4 border-indigo-400">
             لدينا أفضل جودة من الملوخية المفرومة الجاهزة للتصدير.
             اكتشف المنتج وادفع مباشرة عبر الإنترنت.
         </p>
 
-        <!-- زر "من نحن" (تم إخفاءه ولكن دالته ما زالت موجودة) -->
-        <!-- تم التعليق على الزر لإخفائه نهائياً، لكن يمكن إظهاره بمسح التعليق -->
-        <!-- <button id="toggle-info-btn" onclick="toggleMoreInfo()" class="mt-4 py-2 px-8 rounded-full font-bold text-lg bg-teal-500 text-white hover:bg-teal-600 transition duration-300 shadow-lg">
-            من نحن؟ (لمعرفة خدماتنا)
-        </button> -->
-
-        <!-- **القسم المخفي (باقي الوصف) - تم مسح المحتوى التفصيلي منه** -->
+        <!-- **القسم المخفي (تم إخفاء محتواه بالكامل)** -->
         <div id="more-info-content" class="text-right max-w-4xl mx-auto">
             <div class="text-gray-700 text-lg space-y-4">
                 <p class="text-xl font-bold mt-8 text-green-700">
@@ -125,8 +118,8 @@
         <div class="h-1 w-24 bg-teal-500 mx-auto mt-4 rounded-full"></div>
     </header>
 
-    <!-- قائمة المنتجات (تعرض الآن الملوخية فقط) -->
-    <main id="product-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+    <!-- قائمة المنتجات (تم تعديل تخطيط الشبكة ليكون مرناً عندما يكون هناك منتج واحد فقط) -->
+    <main id="product-list" class="grid grid-cols-1 justify-items-center gap-8">
         <!-- يتم إضافة البطاقات هنا بواسطة JavaScript -->
     </main>
 
@@ -228,6 +221,9 @@
         // دالة لعرض جميع بطاقات المنتجات
         function renderProductCards() {
             const container = document.getElementById('product-list');
+            // تأكد من استخدام max-w-sm لتقييد عرض البطاقة وجعلها تبدو كبطاقة واحدة
+            container.className = 'grid grid-cols-1 justify-items-center gap-8'; 
+            
             const dataScript = document.getElementById('product-data').textContent;
             let products;
 
@@ -243,9 +239,8 @@
             container.innerHTML = ''; 
 
             products.forEach(product => {
-                // تمت إعادة وظيفة النقر على البطاقة بالكامل لفتح المودال
                 const cardHtml = `
-                    <div class="product-card bg-white rounded-xl shadow-lg overflow-hidden flex flex-col" onclick="openModal(${product.id})">
+                    <div class="product-card bg-white rounded-xl shadow-lg overflow-hidden flex flex-col w-full max-w-sm" onclick="openModal(${product.id})">
                         <!-- صورة المنتج -->
                         <div class="h-64 overflow-hidden">
                             <img src="${product.imgSrc}" 
@@ -264,7 +259,6 @@
                             
                             <!-- زر الدفع المباشر -->
                             <div class="flex mt-4">
-                                <!-- زر ينبه المستخدم لفتح الخيارات -->
                                 <button onclick="event.stopPropagation(); openModal(${product.id});"
                                    class="flex-1 text-center py-2 rounded-lg font-bold bg-indigo-600 text-white hover:bg-indigo-700 transition duration-300 text-sm shadow-md">اختر الوزن وادفع الآن</button>
                             </div>
@@ -356,7 +350,6 @@
             const product = allProducts.find(p => p.id === productId);
             if (!product) return;
 
-            const optionsContainer = document.getElementById('weight-options-container');
             const paypalArea = document.getElementById('paypal-button-area');
 
             // إزالة حالة النشاط من كل الأزرار وإضافتها للزر المختار
